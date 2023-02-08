@@ -34,14 +34,25 @@ fn main() -> io::Result<()> {
     //let reader = BufReader::new(file);
     let data = fs::read("../../challenge.bin").expect("Can't find challenge.bin file");
 
+    let mut number_of_ops = 0;
+
     loop {
-        
+        if number_of_ops > 500 {
+            break;
+        }
         //println!("{:?}", data[vm.index].to_string());
         
         let op = data[vm.index];
         match op {
-            0 => {
+            0 => { //halt
                 panic!("Exiting from opcode 0");
+            },
+            6 => { //jmp to <a>
+                vm.index += 1;
+                println!("index - {}", vm.index);
+                println!("data at index - {}", data[vm.index]);
+                vm.index = data[vm.index] as usize;
+                println!("new index - {}", vm.index);
             }
             19 => {
                 vm.index += 2;
@@ -58,11 +69,12 @@ fn main() -> io::Result<()> {
             }
         }
         //println!("t");
-        if vm.index > 1000 {
-            break;
-        }
+        // if vm.index > 1000 {
+        //     break;
+        // }
         
-        vm.index += 1;
+        vm.index += 2;
+        number_of_ops += 1;
     }
 
     //println!("The bytes: {:?}", &buffer[..bytes_read]);
